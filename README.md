@@ -1,27 +1,24 @@
-# Melora — Ultimate Discord Music Experience
+# Melora
 
-Melora is a premium-grade, modular Discord music bot built for stability, performance, and rich user interaction. Powered by TypeScript and Lavalink, it delivers crystal-clear audio with a state-of-the-art interactive interface.
+Melora is a lightweight, high-performance Discord music bot built for stability and simplicity. It uses TypeScript and Lavalink to provide a seamless audio experience without the bloat.
 
-## ✨ Highlights
+## Features
 
-- **Hybrid Interaction**: Seamless support for both **Slash Commands** and high-speed **Prefix Commands**.
-- **Audiophile Quality**: Full Lavalink v4 integration via Shoukaku for low-latency, high-fidelity playback.
-- **Premium UI/UX**: Dynamic "Now Playing" panels, interactive paginated queues, and ultra-responsive button controls.
-- **Smart Playback**: Advanced features like Autoplay, Mood-based DJing, and Jam Sessions for continuous music.
-- **Robust Security**: Enterprise-ready permission system with tiered access (Owner, Admin, DJ, User).
-- **Deep Insights**: Personal "Whispers" (daily/weekly listening recaps) and detailed server-wide music statistics.
-- **Resilient Data**: Native PostgreSQL support with an intelligent JSON storage fallback for zero-config setups.
+- Fast and responsive playback
+- Fully relies on slash commands for a clean interface
+- Built-in queue management and playback controls
+- Lightweight architecture optimized for performance
+- Simple global history tracking
 
----
-
-## 🚀 Quick Start
+## Quick Start
 
 ### 1. Prerequisites
-- **Node.js**: 18.0.0 or higher
-- **Lavalink**: A running Lavalink v4 server
-- **Discord Bot**: A registered application with `Message Content` and `Server Members` intents enabled.
+- Node.js 18.0.0 or higher
+- A running Lavalink v4 server
+- A registered Discord bot application
 
 ### 2. Installation
+Clone the repository and install the dependencies:
 ```bash
 git clone <your-repo-link>
 cd melora
@@ -29,66 +26,22 @@ npm install
 ```
 
 ### 3. Configuration
-Create a `.env` file in the root directory based on `.env.example`:
+Create a .env file in the root directory. You can use the provided .env.example as a template:
 ```env
-# Required
-DISCORD_TOKEN=
-BOT_OWNER_ID=
-LAVALINK_NODES=name|host|port|password
-
-# Optional Extras
-SPOTIFY_CLIENT_ID=
-SPOTIFY_CLIENT_SECRET=
-GENIUS_ACCESS_TOKEN=
-LOG_LEVEL=info
-USE_JSON_FALLBACK=true
+DISCORD_TOKEN="YOUR_DISCORD_BOT_TOKEN_HERE"
+BOT_OWNER_ID="YOUR_DISCORD_USER_ID_HERE"
+LAVALINK_NODES="MeloLink|localhost|2333|youshallnotpass"
 ```
 
 ### 4. Launch
+Build and start the bot:
 ```bash
-# Build the project
 npm run build
-
-# Deploy Slash Commands
-npm run deploy
-
-# Start the engine
 npm start
 ```
 
----
+## Commands
+Melora keeps things simple with easy to use commands for playback, queue management, and basic settings. Type / in your Discord server to see all available commands.
 
-## 🛠️ Commands & Categories
-
-Melora features over **75 unique commands** organized into a clean hierarchy:
-
-- 🎵 **Playback**: play, skip, stop, pause, resume, seek, volume, replay
-- 📜 **Queue**: list, shuffle, clear, remove, move, repeat, autoplay
-- 💎 **Filters**: bassboost, nightcore, vaporwave, 8d, equalizer, speed, pitch
-- 📂 **Playlists**: create, load, save, delete, list, info
-- 📊 **Stats**: rank, top, leaderboard, wrapped, daily/weekly whispers
-- ⚙️ **Settings**: prefix, 24/7, music-channel, dj-role, language
-- 🛠️ **Utility**: ping, uptime, help, info, nodes, invite
-
----
-
-## 🏗️ Architecture
-
-Built with a focus on modularity and type safety:
-
-- **`src/core/`**: Central event and command dispatching engine.
-- **`src/managers/`**: Orchestration layers for Music, Permissions, and State.
-- **`src/middleware/`**: Safety layers for Rate Limiting, Cooldowns, and Access Control.
-- **`src/structures/`**: Core logic for the player and queue systems.
-- **`src/components/`**: Rich Discord UI builders (Containers, Menus, Buttons).
-
----
-
-## ⚙️ Production Notes
-
-- **Process Management**: Use `pm2` for high availability: `pm2 start dist/index.js --name melora`.
-- **Performance**: We recommend hosting Lavalink on the same network as your bot for the lowest possible latency.
-- **Scalability**: The database repository pattern allows for easy migration between storage backends.
-
-## 📄 License
-Licensed under the [MIT License](LICENSE).
+## License
+Licensed under the MIT License.
