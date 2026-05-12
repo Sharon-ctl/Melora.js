@@ -1,0 +1,47 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+
+# Environment variables (secrets)
+.env
+.env.*
+
+# Database files
+data/
+
+# Logs
+logs/
+*.log
+
+# Temp & backup files (DB writes + corruption recovery)
+*.tmp
+*.bak
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Archives
+*.tar.gz
+*.zip
+*.rar
+*.7z
+
+# Test & debug files
+test-*.ts
+debug-*.ts
+
+# Audit dumps & review files
+*DUMP*.txt
+*AUDIT*.txt
+*review*.txt
+*explan*.txt
+exports.txt
+validation.log
+deploy_error.*
