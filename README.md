@@ -1,5 +1,7 @@
 # Melora
 
+[![CI](https://github.com/Sharon-ctl/Melora.js/actions/workflows/ci.yml/badge.svg)](https://github.com/Sharon-ctl/Melora.js/actions/workflows/ci.yml)
+
 Melora is a lightweight, high-performance Discord music bot built for stability and simplicity. It uses TypeScript and Lavalink to provide a seamless audio experience without the bloat.
 
 ## Features
@@ -48,6 +50,10 @@ npm start
 
 ## Commands
 Melora includes playback and queue controls, playlists, filters, saved favorites, personal listening history and stats, and a standalone `/search` command that finds tracks without queuing them. Type `/` in your Discord server to see the registered commands.
+
+## Development
+
+Run the automated unit suite with `npm test`. It compiles the TypeScript project and covers queue rules and per-user listening history.
 
 ## License
 Licensed under the MIT License.
