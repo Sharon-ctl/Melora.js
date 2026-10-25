@@ -9,6 +9,22 @@
 
 Melora is a lightweight, high-performance Discord music bot built for stability and simplicity. It uses TypeScript and Lavalink to provide a seamless audio experience without the bloat.
 
+## Packages
+
+Direct dependency versions below are the versions resolved in [`package-lock.json`](package-lock.json). Use `npm ci` to install the locked dependency tree reproducibly.
+
+| Package | Version | Scope | Used for |
+| --- | --- | --- | --- |
+| [discord.js](https://www.npmjs.com/package/discord.js) | 14.27.0 | Runtime | Discord API, commands, and interactions |
+| [Shoukaku](https://www.npmjs.com/package/shoukaku) | 4.3.0 | Runtime | Lavalink node connections and audio playback |
+| [dotenv](https://www.npmjs.com/package/dotenv) | 16.6.1 | Runtime | Environment-based configuration |
+| [TypeScript](https://www.npmjs.com/package/typescript) | 5.9.3 | Development | Type checking and compilation |
+| [ts-node](https://www.npmjs.com/package/ts-node) | 10.9.2 | Development | TypeScript development and command deployment |
+| [ts-morph](https://www.npmjs.com/package/ts-morph) | 27.0.2 | Development | TypeScript source tooling |
+| [@types/node](https://www.npmjs.com/package/@types/node) | 22.20.5 | Development | Node.js type definitions |
+
+Dependabot checks npm and GitHub Actions dependencies weekly; CI runs `npm test` on pushes and pull requests.
+
 ## Features
 
 - Fast and responsive playback
@@ -29,7 +45,7 @@ Clone the repository and install the dependencies:
 ```bash
 git clone <your-repo-link>
 cd melora
-npm install
+npm ci
 ```
 
 Register the slash commands with Discord after setting up `.env`:
