@@ -13,7 +13,7 @@ Melora is a lightweight, high-performance Discord music bot built for stability 
 ## Quick Start
 
 ### 1. Prerequisites
-- Node.js 18.0.0 or higher
+- Node.js 22 or higher
 - A running Lavalink v4 server
 - A registered Discord bot application
 
@@ -23,6 +23,12 @@ Clone the repository and install the dependencies:
 git clone <your-repo-link>
 cd melora
 npm install
+```
+
+Register the slash commands with Discord after setting up `.env`:
+
+```bash
+npm run deploy
 ```
 
 ### 3. Configuration
@@ -41,7 +47,7 @@ npm start
 ```
 
 ## Commands
-Melora keeps things simple with easy to use commands for playback, queue management, and basic settings. Type / in your Discord server to see all available commands.
+Melora includes playback and queue controls, playlists, filters, saved favorites, personal listening history and stats, and a standalone `/search` command that finds tracks without queuing them. Type `/` in your Discord server to see the registered commands.
 
 ## License
 Licensed under the MIT License.

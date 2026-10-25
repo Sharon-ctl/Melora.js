@@ -7,11 +7,9 @@ export class PlayHistoryRepo {
     constructor(private readonly db: Database) { }
 
     async add(entry: PlayHistoryEntry): Promise<void> {
-        // O(1) deduplication: use guildId:trackUri as key so replaying the same
-        // track in the same guild just overwrites the old entry with updated timestamp.
-        // This avoids the previous O(n) full-table query + sequential deletes.
-        const dedupeKey = `${entry.guildId}:${entry.trackUri}`;
-        // Also keep a user-scoped key for getUserHistory queries
+        // Keep the latest play per user, guild, and track. Omitting userId here
+        // caused one listener's play to overwrite another listener's history.
+        const dedupeKey = `${entry.userId}:${entry.guildId}:${entry.trackUri}`;
         const data = { ...entry, _dedupeKey: dedupeKey };
         await this.db.set(TABLE, dedupeKey, data as unknown as Record<string, unknown>);
     }
@@ -21,12 +19,23 @@ export class PlayHistoryRepo {
             TABLE,
             (e) => e.userId === userId && e.guildId === guildId,
         );
-        return all.sort((a, b) => b.timestamp - a.timestamp).slice(0, limit);
+        // Collapse legacy rows written with the old guild:track key alongside
+        // the new user-scoped key, keeping the newest record for each track.
+        const unique = new Map<string, PlayHistoryEntry>();
+        for (const entry of all.sort((a, b) => b.timestamp - a.timestamp)) {
+            if (!unique.has(entry.trackUri)) unique.set(entry.trackUri, entry);
+        }
+        return [...unique.values()].slice(0, limit);
     }
 
     async getGuildHistory(guildId: string, limit: number): Promise<PlayHistoryEntry[]> {
         const all = await this.db.query<PlayHistoryEntry>(TABLE, (e) => e.guildId === guildId);
-        return all.sort((a, b) => b.timestamp - a.timestamp).slice(0, limit);
+        const unique = new Map<string, PlayHistoryEntry>();
+        for (const entry of all.sort((a, b) => b.timestamp - a.timestamp)) {
+            const key = `${entry.userId}:${entry.trackUri}`;
+            if (!unique.has(key)) unique.set(key, entry);
+        }
+        return [...unique.values()].slice(0, limit);
     }
 
     async getRecentUris(guildId: string, count: number): Promise<string[]> {
