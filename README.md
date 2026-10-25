@@ -1,6 +1,11 @@
 # Melora
 
 [![CI](https://github.com/Sharon-ctl/Melora.js/actions/workflows/ci.yml/badge.svg)](https://github.com/Sharon-ctl/Melora.js/actions/workflows/ci.yml)
+[![Tests](https://img.shields.io/badge/tests-8%20passing-brightgreen?style=flat-square&logo=npm&logoColor=white)](https://github.com/Sharon-ctl/Melora.js/actions/workflows/ci.yml)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.9.3-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Node.js](https://img.shields.io/badge/Node.js-22%2B-339933?style=flat-square&logo=nodedotjs&logoColor=white)](https://nodejs.org/)
+[![discord.js](https://img.shields.io/badge/discord.js-14.27.0-5865F2?style=flat-square&logo=discord&logoColor=white)](https://www.npmjs.com/package/discord.js)
+[![Shoukaku](https://img.shields.io/badge/Shoukaku-4.3.0-0A7EA4?style=flat-square&logo=musicbrainz&logoColor=white)](https://www.npmjs.com/package/shoukaku)
 
 Melora is a lightweight, high-performance Discord music bot built for stability and simplicity. It uses TypeScript and Lavalink to provide a seamless audio experience without the bloat.
 
