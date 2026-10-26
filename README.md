@@ -70,7 +70,7 @@ npm start
 ```
 
 ## Commands
-Melora includes playback and queue controls, playlists, filters, saved favorites, personal listening history and stats, and a standalone `/search` command that finds tracks without queuing them. Type `/` in your Discord server to see the registered commands.
+Melora includes playback and queue controls, `/queue-forecast` for estimated start times (live or unknown-length tracks are excluded), playlists, filters, saved favorites, personal listening history and stats, and a standalone `/search` command that finds tracks without queuing them. Type `/` in your Discord server to see the registered commands.
 
 ## Development
 

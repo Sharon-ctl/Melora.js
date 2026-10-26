@@ -1,5 +1,6 @@
 import { Events, type Interaction, type GuildMember, type VoiceBasedChannel } from 'discord.js';
 import type { MeloraClient } from './Client.js';
+import type { GuildSession } from '../structures/GuildSession.js';
 import { Logger } from '../utils/Logger.js';
 import { ErrorHandler } from '../utils/ErrorHandler.js';
 import { CooldownMiddleware } from '../middleware/CooldownMiddleware.js';
@@ -12,6 +13,35 @@ export class EventHandler {
     private readonly cooldownMiddleware = new CooldownMiddleware();
     private readonly rateLimiter = new RateLimiter();
     private readonly emptyVcTimers = new Map<string, ReturnType<typeof setTimeout>>();
+
+    private clearEmptyVcTimer(guildId: string): void {
+        const timer = this.emptyVcTimers.get(guildId);
+        if (timer) clearTimeout(timer);
+        this.emptyVcTimers.delete(guildId);
+    }
+
+    private scheduleEmptyVcTimer(guildId: string, expectedSession: GuildSession): void {
+        this.clearEmptyVcTimer(guildId);
+        const timer = setTimeout(() => {
+            this.emptyVcTimers.delete(guildId);
+            const session = this.client.music.getSession(guildId);
+            // Voice events can race the timer callback. Recheck both the session and
+            // current listener count before stopping playback or destroying it.
+            if (session !== expectedSession || session.getListenerCount() > 0) {
+                Logger.info('VoiceState', `Empty-VC timer expired but listeners returned in guild ${guildId}; keeping session alive.`);
+                return;
+            }
+
+            if (!session.is247) {
+                Logger.info('VoiceState', `VC empty for 3m in guild ${guildId}, destroying session`);
+                void session.destroy();
+            } else {
+                Logger.info('VoiceState', `VC empty in guild ${guildId}, but 24/7 mode is enabled. Stopping player and clearing queue.`);
+                void session.stop();
+            }
+        }, 180000);
+        this.emptyVcTimers.set(guildId, timer);
+    }
 
     constructor(client: MeloraClient) {
         this.client = client;
@@ -99,6 +129,7 @@ export class EventHandler {
                 // Forcefully disconnected
                 if (newState.channelId === null) {
                     Logger.info('VoiceState', `Bot was forcefully disconnected from VC in guild ${guildId}, destroying session.`);
+                    this.clearEmptyVcTimer(guildId);
                     void session.destroy();
                     return;
                 }
@@ -114,26 +145,9 @@ export class EventHandler {
                             if (session.isPlaying && !session.player?.paused) {
                                 void session.pause();
                             }
-                            const existing = this.emptyVcTimers.get(guildId);
-                            if (!existing) {
-                                const timerId = setTimeout(() => {
-                                    if (!session.is247) {
-                                        Logger.info('VoiceState', `VC empty for 3m in guild ${guildId}, destroying session`);
-                                        void session.destroy();
-                                    } else {
-                                        Logger.info('VoiceState', `VC empty in guild ${guildId}, but 24/7 mode is enabled. Stopping player and clearing queue.`);
-                                        void session.stop();
-                                    }
-                                    this.emptyVcTimers.delete(guildId);
-                                }, 180000);
-                                this.emptyVcTimers.set(guildId, timerId);
-                            }
+                            this.scheduleEmptyVcTimer(guildId, session);
                         } else {
-                            const existing = this.emptyVcTimers.get(guildId);
-                            if (existing) {
-                                clearTimeout(existing);
-                                this.emptyVcTimers.delete(guildId);
-                            }
+                            this.clearEmptyVcTimer(guildId);
                             if (session.player?.paused) {
                                 void session.resume();
                             }
@@ -155,28 +169,13 @@ export class EventHandler {
                         void currentSession.pause();
                     }
                     // Start 3m empty-VC timer
-                    const timerId = setTimeout(() => {
-                        const currentSession = this.client.music.getSession(guildId);
-                        if (currentSession && !currentSession.is247) {
-                            Logger.info('VoiceState', `VC empty for 3m in guild ${guildId}, destroying session`);
-                            void currentSession.destroy();
-                        } else if (currentSession?.is247) {
-                            Logger.info('VoiceState', `VC empty in guild ${guildId}, but 24/7 mode is enabled. Stopping player and clearing queue.`);
-                            void currentSession.stop();
-                        }
-                        this.emptyVcTimers.delete(guildId);
-                    }, 180000);
-                    this.emptyVcTimers.set(guildId, timerId);
+                    if (currentSession) this.scheduleEmptyVcTimer(guildId, currentSession);
                 }
             }
 
             // Someone joined the bot's VC — cancel timer
             if (newState.channelId === botVcId && oldState.channelId !== botVcId) {
-                const existing = this.emptyVcTimers.get(guildId);
-                if (existing) {
-                    clearTimeout(existing);
-                    this.emptyVcTimers.delete(guildId);
-                }
+                this.clearEmptyVcTimer(guildId);
                 const currentSession = this.client.music.getSession(guildId);
                 if (currentSession && currentSession.player?.paused) {
                     void currentSession.resume();

@@ -1,6 +1,29 @@
 import type { CommandContext } from './CommandContext.js';
 import { QueuePanel } from '../components/QueuePanel.js';
 import { LoopMode } from '../types/index.js';
+import type { TrackInfo } from '../types/index.js';
+import { Validators } from '../utils/Validators.js';
+
+export function estimateQueueWaitMs(
+    currentDurationMs: number,
+    currentPositionMs: number,
+    upcoming: TrackInfo[],
+    position: number,
+): { waitMs: number; omittedUnknownDuration: boolean } {
+    const preceding = upcoming.slice(0, position - 1);
+    const currentHasUnknownDuration = !Number.isFinite(currentDurationMs) || currentDurationMs <= 0;
+    const omittedUnknownDuration = currentHasUnknownDuration || preceding.some(
+        track => !Number.isFinite(track.duration) || track.duration <= 0,
+    );
+    const currentRemaining = currentHasUnknownDuration
+        ? 0
+        : Math.max(0, currentDurationMs - Math.max(0, Number.isFinite(currentPositionMs) ? currentPositionMs : 0));
+    const precedingDuration = preceding.reduce(
+        (total, track) => total + (Number.isFinite(track.duration) && track.duration > 0 ? track.duration : 0),
+        0,
+    );
+    return { waitMs: currentRemaining + precedingDuration, omittedUnknownDuration };
+}
 
 export class QueueController {
     static async queue(context: CommandContext): Promise<void> {
@@ -8,6 +31,31 @@ export class QueueController {
         const tracks = session?.queue.getAll() ?? [];
         const current = session?.queue.current ?? null;
         await QueuePanel.send(context, tracks, current);
+    }
+
+    static async forecast(context: CommandContext, position: number): Promise<void> {
+        const session = context.client.music.getSession(context.guild.id);
+        if (!session || !session.isPlaying) {
+            await context.reply('Nothing is playing.');
+            return;
+        }
+        const upcoming = session.queue.getAll();
+        if (position < 1 || position > upcoming.length) {
+            await context.reply(`Choose a queue position from 1 to ${upcoming.length}.`);
+            return;
+        }
+
+        const current = session.queue.current;
+        const estimate = estimateQueueWaitMs(
+            current?.duration ?? 0,
+            session.player?.position ?? 0,
+            upcoming,
+            position,
+        );
+        const note = estimate.omittedUnknownDuration ? ' (live or unknown-length tracks are excluded)' : '';
+        await context.tempReply(
+            `Track **#${position}** is estimated to start in about \`${Validators.formatDuration(estimate.waitMs)}\`${note}.`,
+        );
     }
 
     static async shuffle(context: CommandContext): Promise<void> {

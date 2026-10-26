@@ -3,6 +3,7 @@ import test from 'node:test';
 import { Queue } from '../structures/Queue.js';
 import { QueueLimitExceededError } from '../errors/BotErrors.js';
 import { LoopMode, type TrackInfo } from '../types/index.js';
+import { estimateQueueWaitMs } from '../controllers/QueueController.js';
 
 function track(id: string, requesterId = 'user-1'): TrackInfo {
     return {
@@ -68,4 +69,18 @@ test('removeByUser updates queue contents and duplicate lookup', () => {
     assert.equal(queue.removeByUser('user-a'), 1);
     assert.deepEqual(queue.getAll().map(item => item.requester.id), ['user-b']);
     assert.equal(queue.isDuplicate('https://example.test/one'), false);
+});
+
+test('queue forecast uses remaining current time and flags unknown-length tracks', () => {
+    const upcoming = [track('one'), track('live'), track('three')];
+    upcoming[1]!.duration = 0;
+
+    assert.deepEqual(estimateQueueWaitMs(120_000, 30_000, upcoming, 3), {
+        waitMs: 150_000,
+        omittedUnknownDuration: true,
+    });
+    assert.deepEqual(estimateQueueWaitMs(60_000, 90_000, upcoming, 1), {
+        waitMs: 0,
+        omittedUnknownDuration: false,
+    });
 });
