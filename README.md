@@ -1,7 +1,8 @@
 # Melora
 
 [![CI](https://github.com/Sharon-ctl/Melora.js/actions/workflows/ci.yml/badge.svg)](https://github.com/Sharon-ctl/Melora.js/actions/workflows/ci.yml)
-[![Tests](https://img.shields.io/badge/tests-8%20passing-brightgreen?style=flat-square&logo=npm&logoColor=white)](https://github.com/Sharon-ctl/Melora.js/actions/workflows/ci.yml)
+[![Version](https://img.shields.io/badge/version-v1.0.1-blue?style=flat-square)](https://github.com/Sharon-ctl/Melora.js/tree/v1.0.1)
+[![Tests](https://img.shields.io/badge/tests-9%20passing-brightgreen?style=flat-square&logo=npm&logoColor=white)](https://github.com/Sharon-ctl/Melora.js/actions/workflows/ci.yml)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.9.3-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Node.js](https://img.shields.io/badge/Node.js-22%2B-339933?style=flat-square&logo=nodedotjs&logoColor=white)](https://nodejs.org/)
 [![discord.js](https://img.shields.io/badge/discord.js-14.27.0-5865F2?style=flat-square&logo=discord&logoColor=white)](https://www.npmjs.com/package/discord.js)
@@ -32,6 +33,7 @@ Dependabot checks npm and GitHub Actions dependencies weekly; CI runs `npm test`
 - Built-in queue management and playback controls
 - Lightweight architecture optimized for performance
 - Simple global history tracking
+- `/diagnose` checks gateway, audio, voice, playback, and queue state, then returns a stable issue code and suggested next step.
 
 ## Quick Start
 
@@ -70,7 +72,7 @@ npm start
 ```
 
 ## Commands
-Melora includes playback and queue controls, `/queue-forecast` for estimated start times (live or unknown-length tracks are excluded), playlists, filters, saved favorites, personal listening history and stats, and a standalone `/search` command that finds tracks without queuing them. Type `/` in your Discord server to see the registered commands.
+Melora includes playback and queue controls, `/queue-forecast` for estimated start times (live or unknown-length tracks are excluded), playlists, filters, saved favorites, personal listening history and stats, `/diagnose` for playback checks with stable issue codes and suggested next steps, and a standalone `/search` command that finds tracks without queuing them. Type `/` in your Discord server to see the registered commands.
 
 ## Development
 

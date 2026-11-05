@@ -1,6 +1,6 @@
 {
   "name": "melora",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A lightweight, high-performance Discord music bot built with TypeScript and Lavalink.",
   "type": "module",
   "main": "dist/index.js",
